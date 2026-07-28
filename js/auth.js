@@ -24,9 +24,10 @@ function initApp() {
     const token = localStorage.getItem('erp_token');
     const role = localStorage.getItem('erp_role');
     const username = localStorage.getItem('erp_username');
+    const akses_menu = JSON.parse(localStorage.getItem('erp_akses_menu') || '[]');
     
     if (token && role) {
-        currentUser = { token, role, username };
+        currentUser = { token, role, username, akses_menu };
         document.getElementById('view-login').classList.add('hidden-hash');
         document.getElementById('view-main').classList.remove('hidden-hash');
         
@@ -55,6 +56,7 @@ function logout() {
     localStorage.removeItem('erp_token');
     localStorage.removeItem('erp_role');
     localStorage.removeItem('erp_username');
+    localStorage.removeItem('erp_akses_menu');
     currentUser = null;
     initApp();
 }
@@ -64,7 +66,9 @@ function buildMenu() {
     if (!nav) return;
     nav.innerHTML = '';
     MENU_CONFIG.forEach(item => {
-        if (item.roles.includes(currentUser.role)) {
+        const punyaAksesRole = item.roles.includes(currentUser.role);
+        const punyaAksesKhusus = (currentUser.akses_menu || []).includes(item.id);
+        if (punyaAksesRole || punyaAksesKhusus) {
             const a = document.createElement('a');
             a.href = '#' + item.id;
             a.className = 'flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200';
@@ -94,6 +98,7 @@ if (formLogin) {
             localStorage.setItem('erp_token', res.data.token);
             localStorage.setItem('erp_role', res.data.role);
             localStorage.setItem('erp_username', res.data.username);
+            localStorage.setItem('erp_akses_menu', JSON.stringify(res.data.akses_menu || []));
             initApp();
         } else {
             showToast(res ? res.message : "Login gagal, server tidak merespons", "error");
