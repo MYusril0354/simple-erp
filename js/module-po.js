@@ -54,7 +54,7 @@ async function renderInputPO() {
 
         if (items.length === 0) return showToast('Tambahkan minimal 1 item barang', 'error');
 
-        const r = await fetchAPI('savePO', { customer, items }, true);
+        const r = await fetchAPI('createPO', { customer, items }, true);
         if(r.success) {
             showToast(r.message);
             kirimEmailNotifikasiPOBaru(r.data?.no_po, customer, items, cRes?.data, bRes?.data);
