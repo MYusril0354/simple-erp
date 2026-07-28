@@ -186,32 +186,18 @@ window.tambahColly = function(itemIdx) {
 
 window.simpanRincianColly = async function(showNotif = false) {
     const s = collyModalState;
-    let semuaCocok = true;
-    const colliesPayload = [];
-
-    s.items.forEach(it => {
-        const sum = it.collies.reduce((a, b) => a + b, 0);
-        if (sum !== it.qty_sj) semuaCocok = false;
-        
-        it.collies.forEach((qty, idx) => {
-            colliesPayload.push({
-                kode_barang: it.kode_barang,
-                colly_ke: idx + 1,
-                qty: qty
-            });
-        });
-    });
-
-    s.lastValidasi = { semuaCocok };
-
     const payload = {
         no_surat_jalan: s.no_surat_jalan,
-        collies: colliesPayload
+        items: s.items.map(it => ({
+            kode_barang: it.kode_barang,
+            collies: it.collies.map(qty => ({ qty }))
+        }))
     };
 
-    const res = await fetchAPI('saveCollies', payload, true);
+    const res = await fetchAPI('saveSuratJalanColly', payload, true);
     if (res && res.success) {
-        if(showNotif) showToast('Rincian Colly berhasil disimpan.');
+        s.lastValidasi = res.data || null;
+        if(showNotif) showToast(res.message || 'Rincian Colly berhasil disimpan.');
         return true;
     } else {
         showToast(res ? res.message : 'Gagal menyimpan rincian colly', 'error');
