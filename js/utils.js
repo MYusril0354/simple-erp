@@ -16,6 +16,36 @@ if (currentDateEl) {
 function showLoading() { document.getElementById('loading').classList.remove('hidden'); }
 function hideLoading() { document.getElementById('loading').classList.add('hidden'); }
 
+// --- Filter Rentang Tanggal (dipakai di Kartu Stok & Rekap PO) ---
+// Default: 1 bulan ke belakang sampai hari ini, format "YYYY-MM-DD" (cocok untuk <input type="date">)
+function getDefaultDateRange() {
+    const akhir = new Date();
+    const mulai = new Date();
+    mulai.setMonth(mulai.getMonth() - 1);
+    const toYMD = (d) => d.toISOString().slice(0, 10);
+    return { tanggal_mulai: toYMD(mulai), tanggal_akhir: toYMD(akhir) };
+}
+
+// Render bar filter tanggal generik. onApplyFnName = nama fungsi global (string) yang
+// dipanggil dengan (tanggalMulai, tanggalAkhir) saat tombol "Terapkan" diklik.
+function renderFilterTanggalBar(tanggalMulai, tanggalAkhir, onApplyFnName) {
+    return `
+        <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-4 mb-4 flex flex-col sm:flex-row sm:items-end gap-3">
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 mb-1">Dari Tanggal</label>
+                <input type="date" id="filter-tanggal-mulai" value="${tanggalMulai}" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 mb-1">Sampai Tanggal</label>
+                <input type="date" id="filter-tanggal-akhir" value="${tanggalAkhir}" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+            </div>
+            <button onclick="${onApplyFnName}(document.getElementById('filter-tanggal-mulai').value, document.getElementById('filter-tanggal-akhir').value)" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700 flex items-center gap-2 transition-colors">
+                <i data-lucide="filter" class="w-4 h-4"></i> Terapkan Filter
+            </button>
+        </div>
+    `;
+}
+
 // --- Fungsi Skeleton Loading Global ---
 function getSkeletonHTML() {
     return `
