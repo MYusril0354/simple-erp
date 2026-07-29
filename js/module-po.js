@@ -258,7 +258,7 @@ async function renderDaftarPO() {
                                     <td class="px-3 py-3 text-right border-r border-blue-200">${group.total_terkirim.toLocaleString('id-ID')}</td>
                                     <td class="px-3 py-3 text-right border-r border-blue-200 text-red-700">${group.total_outstanding.toLocaleString('id-ID')}</td>
                                     <td class="px-3 py-3 text-right border-r border-blue-200 font-black text-green-700 tracking-wider">${group.stok_gudang.toLocaleString('id-ID')}</td>
-                                    <td class="px-3 py-3 text-right font-black tracking-wider ${(group.stok_gudang - group.total_pesanan) < 0 ? 'text-red-700' : 'text-gray-800'}">${(group.stok_gudang - group.total_pesanan).toLocaleString('id-ID')}</td>
+                                    <td class="px-3 py-3 text-right font-black tracking-wider ${(group.stok_gudang - group.total_outstanding) < 0 ? 'text-red-700' : 'text-gray-800'}">${(group.stok_gudang - group.total_outstanding).toLocaleString('id-ID')}</td>
                                 </tr>
                             </tbody>
                         </table>
