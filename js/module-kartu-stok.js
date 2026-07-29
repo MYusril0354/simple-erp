@@ -1,8 +1,14 @@
 // --- KARTU STOK (GROUPED PER BARANG) ---
-async function renderKartuStok() {
+async function renderKartuStok(tanggalMulai, tanggalAkhir) {
     setPageTitle('Laporan Kartu Stok');
+    if (!tanggalMulai || !tanggalAkhir) {
+        const def = getDefaultDateRange();
+        tanggalMulai = def.tanggal_mulai;
+        tanggalAkhir = def.tanggal_akhir;
+    }
     const [ksRes, bRes, rRes] = await Promise.all([
-        fetchAPI('getKartuStok'), fetchAPI('getMaster', { type: 'Barang' }), fetchAPI('getMaster', { type: 'Rak' })
+        fetchAPI('getKartuStok', { tanggal_mulai: tanggalMulai, tanggal_akhir: tanggalAkhir }),
+        fetchAPI('getMaster', { type: 'Barang' }), fetchAPI('getMaster', { type: 'Rak' })
     ]);
     if(!ksRes || !ksRes.success) return;
 
@@ -80,6 +86,7 @@ async function renderKartuStok() {
                 <i data-lucide="printer" class="w-4 h-4"></i> Cetak Kartu Stok
             </button>
         </div>
+        ${renderFilterTanggalBar(tanggalMulai, tanggalAkhir, 'renderKartuStok')}
         <div id="print-kartustok-container" class="w-full">
             ${htmlContent}
         </div>

@@ -286,11 +286,16 @@ async function renderDaftarPO() {
 }
 
 // --- REKAP SELURUH PO (Dengan Fitur Rowspan per Item) ---
-async function renderRekapPO() {
+async function renderRekapPO(tanggalMulai, tanggalAkhir) {
     setPageTitle('Rekapitulasi Seluruh PO');
+    if (!tanggalMulai || !tanggalAkhir) {
+        const def = getDefaultDateRange();
+        tanggalMulai = def.tanggal_mulai;
+        tanggalAkhir = def.tanggal_akhir;
+    }
     
     const [resPO, bRes] = await Promise.all([
-        fetchAPI('getPOList'),
+        fetchAPI('getPOList', { tanggal_mulai: tanggalMulai, tanggal_akhir: tanggalAkhir }),
         fetchAPI('getMaster', { type: 'Barang' })
     ]);
     
@@ -358,7 +363,7 @@ async function renderRekapPO() {
                 <i data-lucide="printer" class="w-4 h-4"></i> Cetak Rekap
             </button>
         </div>
-        
+        ${renderFilterTanggalBar(tanggalMulai, tanggalAkhir, 'renderRekapPO')}
         <div id="print-rekap-container">
             ${createCard(`
                 <div class="overflow-x-auto w-full max-w-full rounded-lg border-2 border-gray-200">
