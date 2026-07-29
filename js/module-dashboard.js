@@ -21,7 +21,7 @@ async function renderDashboard() {
 
     const html = `
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between relative overflow-hidden group">
+            <div onclick="window.location.hash='#persiapan'" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between relative overflow-hidden group cursor-pointer hover:shadow-md transition-shadow">
                 <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-500 rounded-l-xl transition-all group-hover:w-2"></div>
                 <div><p class="text-gray-500 text-sm font-medium mb-1">PO Status Open</p><h3 class="text-3xl font-extrabold text-gray-800">${res.data.openPO}</h3></div>
                 <div class="p-3 bg-blue-50 rounded-lg"><i data-lucide="clipboard-list" class="w-8 h-8 text-blue-500"></i></div>
