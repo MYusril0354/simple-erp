@@ -220,8 +220,8 @@ window.cetakLabelColly = async function() {
             labelBlocks += `
             <div class="label-box">
                 <div class="label-header">
-                    <span>SHIPPING LABEL</span>
-                    <span style="font-size:16px;">Box ${collyNoGlobal} of ${totalBoxGlobal}</span>
+                    <span>LABEL PENGIRIMAN</span>
+                    <span style="font-size:16px;">Colly ke ${collyNoGlobal} dari ${totalBoxGlobal}</span>
                 </div>
                 <div class="label-body">
                     <div class="label-col">
@@ -230,8 +230,8 @@ window.cetakLabelColly = async function() {
                         <div class="field"><span class="key">EKSPEDISI</span><span class="val besar uppercase">${s.sj.ekspedisi || '-'}</span></div>
                     </div>
                     <div class="label-col border-left">
-                        <div class="field"><span class="key">KODE</span><span class="val besar">${it.kode_barang}</span></div>
-                        <div class="field"><span class="key">NAMA BARANG</span><span class="val">${it.nama_barang}</span></div>
+                        <div class="field"><span class="key">NAMA BARANG</span><span class="val besar uppercase">${it.nama_barang}</span></div>
+                        <div class="field"><span class="key">KODE</span><span class="val">${it.kode_barang}</span></div>
                         <div class="field"><span class="key">QTY</span><span class="val qty">${qty} ${it.satuan}</span></div>
                     </div>
                 </div>
@@ -253,7 +253,7 @@ window.cetakLabelColly = async function() {
                 padding: 10px 14px;
                 margin-bottom: 8mm;
                 box-sizing: border-box;
-                page-break-inside: avoid;
+                page-break-after: always;
                 background: #fff;
             }
             .label-header {
@@ -283,24 +283,24 @@ window.cetakLabelColly = async function() {
             }
             .key {
                 display: block;
-                font-size: 10px;
+                font-size: 12px;
                 font-weight: bold;
                 letter-spacing: 0.5px;
                 color: #444;
             }
             .val {
                 display: block;
-                font-size: 14px;
+                font-size: 16px;
                 font-weight: 600;
                 line-height: 1.25;
                 word-break: break-word;
             }
             .val.besar {
-                font-size: 20px;
+                font-size: 22px;
                 font-weight: 800;
             }
             .val.qty {
-                font-size: 26px;
+                font-size: 28px;
                 font-weight: 900;
             }
             .uppercase { text-transform: uppercase; }
