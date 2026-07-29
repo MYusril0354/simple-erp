@@ -369,7 +369,7 @@ function buildHtmlCetakSJ(s, double = false) {
         <div class="sj-copy">
             ${label ? `<div style="text-align:right; font-size:10px; margin-bottom:4px; font-weight:bold; color:#555;">${label}</div>` : ''}
             <div class="header">
-                <div class="company">${NAME_CORP}<br><span style="font-weight:normal;font-size:11px;">Pandaan, Pasuruan, Jawa Timur</span></div>
+                <div class="company">${NAME_CORP}<br><span style="font-weight:normal;font-size:11px;">${ADDRESS_CORP}</span></div>
                 <div style="text-align:right;"><h2 style="margin:0; font-size:18px;">SURAT JALAN</h2><p style="margin:0;font-weight:bold;">${s.no_surat_jalan}</p></div>
             </div>
             <table class="info-table" style="margin-bottom: 20px;">
