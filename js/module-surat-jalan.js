@@ -319,13 +319,14 @@ function buildHtmlCetakSJ(s, double = false) {
 
         for (let qty in collyGroups) {
             let countCBO = collyGroups[qty];
+            let totalQtyGroup = parseInt(qty, 10) * countCBO;
             totalCBO += countCBO;
 
             itemRows += `
             <tr>
                 <td style="border:1px solid #333;padding:4px 6px;text-align:center;">${it.kode_barang}</td>
                 <td style="border:1px solid #333;padding:4px 6px;background-color:#eaeaea;">${it.nama_barang}</td>
-                <td style="border:1px solid #333;padding:4px 6px;text-align:right;font-weight:bold;">${qty}</td>
+                <td style="border:1px solid #333;padding:4px 6px;text-align:right;font-weight:bold;">${totalQtyGroup}</td>
                 <td style="border:1px solid #333;padding:4px 6px;text-align:center;">${it.satuan}</td>
                 <td style="border:1px solid #333;padding:4px 6px;text-align:center;font-weight:bold;">${countCBO}</td>
             </tr>`;
