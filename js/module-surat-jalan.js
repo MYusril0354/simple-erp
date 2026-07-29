@@ -221,20 +221,20 @@ window.cetakLabelColly = async function() {
             <div class="label-box">
                 <div class="label-header">
                     <span>SHIPPING LABEL</span>
-                    <span style="font-size:18px;">Box ${collyNoGlobal} of ${totalBoxGlobal}</span>
+                    <span style="font-size:16px;">Box ${collyNoGlobal} of ${totalBoxGlobal}</span>
                 </div>
-                <table style="margin-top:10px;">
-                    <tr><td class="font-bold" style="width:25%;">CUSTOMER</td><td style="font-size:24px; font-weight:black; text-transform:uppercase;">${s.customer.nama_customer}</td></tr>
-                    <tr><td class="font-bold">ALAMAT</td><td style="font-size:14px; font-weight:medium;">${s.customer.alamat || '-'}</td></tr>
-                    <tr><td class="font-bold">NO. PO</td><td style="font-size:18px; font-weight:bold;">${s.sj.no_po}</td></tr>
-                    <tr><td class="font-bold">EKSPEDISI</td><td style="font-size:18px; font-weight:bold; text-transform:uppercase;">${s.sj.ekspedisi || '-'}</td></tr>
-                </table>
-                <table style="margin-top:15px;">
-                    <thead><tr><th>KODE BARANG</th><th>DESKRIPSI BARANG</th><th style="width:20%;">QTY</th></tr></thead>
-                    <tbody>
-                        <tr><td class="center font-bold" style="font-size:16px;">${it.kode_barang}</td><td style="font-size:18px; font-weight:bold;">${it.nama_barang}</td><td class="center font-bold" style="font-size:24px;">${qty} ${it.satuan}</td></tr>
-                    </tbody>
-                </table>
+                <div class="label-body">
+                    <div class="label-col">
+                        <div class="field"><span class="key">CUSTOMER</span><span class="val besar uppercase">${s.customer.nama_customer}</span></div>
+                        <div class="field"><span class="key">ALAMAT</span><span class="val">${s.customer.alamat || '-'}</span></div>
+                        <div class="field"><span class="key">EKSPEDISI</span><span class="val besar uppercase">${s.sj.ekspedisi || '-'}</span></div>
+                    </div>
+                    <div class="label-col border-left">
+                        <div class="field"><span class="key">KODE</span><span class="val besar">${it.kode_barang}</span></div>
+                        <div class="field"><span class="key">NAMA BARANG</span><span class="val">${it.nama_barang}</span></div>
+                        <div class="field"><span class="key">QTY</span><span class="val qty">${qty} ${it.satuan}</span></div>
+                    </div>
+                </div>
             </div>`;
         });
     });
@@ -247,34 +247,63 @@ window.cetakLabelColly = async function() {
         <style>
             @page { size: A4 portrait; margin: 10mm; }
             body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #fff; color: #000; }
-            .label-box { 
-                border: 4px solid #000; 
-                padding: 20px; 
-                margin-bottom: 25px; 
-                height: 125mm; /* Setengah halaman A4 */
-                box-sizing: border-box;
-                page-break-after: always;
-                page-break-inside: avoid; /* Mencegah 1 label terpotong 2 halaman */
+            .label-box {
+                border: 3px solid #000;
                 border-radius: 4px;
+                padding: 10px 14px;
+                margin-bottom: 8mm;
+                box-sizing: border-box;
+                page-break-inside: avoid;
                 background: #fff;
             }
-            .label-header { 
-                border-bottom: 2px solid #000; 
-                padding-bottom: 8px; 
-                margin-bottom: 10px; 
-                font-weight: bold; 
-                font-size: 30px; 
-                display: flex; 
+            .label-header {
+                border-bottom: 2px solid #000;
+                padding-bottom: 6px;
+                margin-bottom: 8px;
+                font-weight: bold;
+                font-size: 20px;
+                display: flex;
                 justify-content: space-between;
                 align-items: center;
             }
-            
-            /* Styling Tabel dalam Label */
-            table { width: 100%; border-collapse: collapse; }
-            th, td { border: 1px solid #000; padding: 8px 6px; text-align: left; vertical-align: middle; }
-            th { background-color: #f3f4f6; text-align: center; font-size: 20px; text-transform: uppercase; border-bottom: 2px solid #000;}
-            .center { text-align: center; }
-            .font-bold { font-weight: bold; }              
+            .label-body {
+                display: flex;
+                gap: 12px;
+            }
+            .label-col {
+                flex: 1;
+                min-width: 0;
+            }
+            .label-col.border-left {
+                border-left: 2px dashed #000;
+                padding-left: 12px;
+            }
+            .field {
+                margin-bottom: 6px;
+            }
+            .key {
+                display: block;
+                font-size: 10px;
+                font-weight: bold;
+                letter-spacing: 0.5px;
+                color: #444;
+            }
+            .val {
+                display: block;
+                font-size: 14px;
+                font-weight: 600;
+                line-height: 1.25;
+                word-break: break-word;
+            }
+            .val.besar {
+                font-size: 20px;
+                font-weight: 800;
+            }
+            .val.qty {
+                font-size: 26px;
+                font-weight: 900;
+            }
+            .uppercase { text-transform: uppercase; }
         </style>
     </head>
     <body>
