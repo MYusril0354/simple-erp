@@ -181,22 +181,24 @@ async function renderDaftarPO() {
             const kode = String(item.kode_barang).trim().toUpperCase();
             const pesanan = parseInt(item.qty_pesanan, 10) || 0;
             const terkirim = parseInt(item.qty_terkirim, 10) || 0;
+            const qtyDr = parseInt(item.qty_dr, 10) || 0;
             const outstanding = pesanan - terkirim;
             if (outstanding <= 0) return;
 
             if (!groupedData[kode]) {
                 groupedData[kode] = {
                     kode_barang: kode, nama_barang: masterBarang[kode] || 'Unknown', satuan: masterSatuan[kode] || '-',
-                    list: [], total_pesanan: 0, total_terkirim: 0, total_outstanding: 0, stok_gudang: stokGudang[kode] || 0
+                    list: [], total_pesanan: 0, total_terkirim: 0, total_outstanding: 0, total_qty_dr: 0, stok_gudang: stokGudang[kode] || 0
                 };
             }
             groupedData[kode].list.push({
                 no_po: po.no_po, tanggal: po.tanggal, customer: po.customer,
-                qty_pesanan: pesanan, qty_terkirim: terkirim, qty_os: outstanding
+                qty_pesanan: pesanan, qty_terkirim: terkirim, qty_os: outstanding, qty_dr: qtyDr
             });
             groupedData[kode].total_pesanan += pesanan;
             groupedData[kode].total_terkirim += terkirim;
             groupedData[kode].total_outstanding += outstanding;
+            groupedData[kode].total_qty_dr += qtyDr;
         });
     });
 
@@ -215,8 +217,10 @@ async function renderDaftarPO() {
                     <td class="px-3 py-2.5">${item.customer}</td>
                     <td class="px-3 py-2.5 text-center">${group.satuan}</td>
                     <td class="px-3 py-2.5 text-right font-medium">${item.qty_pesanan.toLocaleString('id-ID')}</td>
+                    <td class="px-3 py-2.5 text-right text-purple-600">${item.qty_dr.toLocaleString('id-ID')}</td>
                     <td class="px-3 py-2.5 text-right">${item.qty_terkirim.toLocaleString('id-ID')}</td>
                     <td class="px-3 py-2.5 text-right font-bold text-red-600">${item.qty_os.toLocaleString('id-ID')}</td>
+                    <td class="px-3 py-2.5"></td>
                     <td class="px-3 py-2.5"></td>
                 </tr>
             `).join('');
@@ -238,9 +242,11 @@ async function renderDaftarPO() {
                                     <th class="px-3 py-3 border-r border-blue-400">Customer</th>
                                     <th class="px-3 py-3 text-center border-r border-blue-400 w-20">Satuan</th>
                                     <th class="px-3 py-3 text-right border-r border-blue-400 w-24">Order</th>
+                                    <th class="px-3 py-3 text-right border-r border-blue-400 w-24">Qty DR</th>
                                     <th class="px-3 py-3 text-right border-r border-blue-400 w-24">Terkirim</th>
                                     <th class="px-3 py-3 text-right border-r border-blue-400 w-24">OS (Sisa)</th>
-                                    <th class="px-3 py-3 text-right w-32">Stok Gudang</th>
+                                    <th class="px-3 py-3 text-right border-r border-blue-400 w-32">Stok Gudang</th>
+                                    <th class="px-3 py-3 text-right w-36">Stok Tanpa Alokasi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -248,9 +254,11 @@ async function renderDaftarPO() {
                                 <tr class="bg-blue-100 font-bold border-t-2 border-blue-200 text-blue-900">
                                     <td colspan="5" class="px-3 py-3 text-right border-r border-blue-200">Total</td>
                                     <td class="px-3 py-3 text-right border-r border-blue-200">${group.total_pesanan.toLocaleString('id-ID')}</td>
+                                    <td class="px-3 py-3 text-right border-r border-blue-200 text-purple-700">${group.total_qty_dr.toLocaleString('id-ID')}</td>
                                     <td class="px-3 py-3 text-right border-r border-blue-200">${group.total_terkirim.toLocaleString('id-ID')}</td>
                                     <td class="px-3 py-3 text-right border-r border-blue-200 text-red-700">${group.total_outstanding.toLocaleString('id-ID')}</td>
-                                    <td class="px-3 py-3 text-right font-black text-green-700 tracking-wider">${group.stok_gudang.toLocaleString('id-ID')}</td>
+                                    <td class="px-3 py-3 text-right border-r border-blue-200 font-black text-green-700 tracking-wider">${group.stok_gudang.toLocaleString('id-ID')}</td>
+                                    <td class="px-3 py-3 text-right font-black tracking-wider ${(group.stok_gudang - group.total_pesanan) < 0 ? 'text-red-700' : 'text-gray-800'}">${(group.stok_gudang - group.total_pesanan).toLocaleString('id-ID')}</td>
                                 </tr>
                             </tbody>
                         </table>
