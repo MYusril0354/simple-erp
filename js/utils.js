@@ -188,6 +188,18 @@ function showToast(message, type = 'success') {
     }, 3500);
 }
 
+// Melakukan satu kali percobaan fetch ke API_URL. Melempar error kalau response
+// bukan JSON valid (mis. GAS lagi kena limit concurrent, balikin HTML <!DOCTYPE>)
+// atau kalau network-nya gagal - error inilah yang jadi sinyal untuk retry.
+async function fetchAPIOnce(action, payload, token) {
+    const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action, payload, token })
+    });
+    return await response.json(); // sengaja tidak di-try/catch di sini, biar error-nya kepropagasi ke pemanggil untuk retry
+}
+
 async function fetchAPI(action, payload = {}, forceOverlay = false) {
     // Daftar endpoint yang hanya bertugas me-load data tampilan (Bukan Aksi Simpan)
     const isViewDataFetch = ['getDashboardData', 'getMaster', 'getPOList', 'getStokPerRak', 'getAntreanSJ', 'getSuratJalanList', 'getKartuStok', 'getLaporanPersiapan'].includes(action);
@@ -196,28 +208,44 @@ async function fetchAPI(action, payload = {}, forceOverlay = false) {
     const useOverlay = forceOverlay || !isViewDataFetch;
     
     if (useOverlay) showLoading();
-    
-    try {
-        const token = localStorage.getItem('erp_token') || "";
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action, payload, token })
-        });
-        const result = await response.json();
-        
-        if (useOverlay) hideLoading();
-        
-        if (!result.success && result.message.includes('Token Expired')) {
-            logout();
-            showToast('Sesi telah habis, silakan login kembali', 'error');
-            return null;
+
+    const token = localStorage.getItem('erp_token') || "";
+    const MAX_RETRY = 3;
+    const BACKOFF_MS = [500, 1000, 2000]; // delay sebelum percobaan ke-2, ke-3, ke-4
+
+    let lastError = null;
+    for (let attempt = 0; attempt <= MAX_RETRY; attempt++) {
+        try {
+            const result = await fetchAPIOnce(action, payload, token);
+
+            // Sukses dapat JSON valid (baik success:true maupun success:false karena alasan
+            // bisnis seperti "password salah" / "akses ditolak") - JANGAN di-retry, ini
+            // bukan error transient, langsung diproses seperti biasa.
+            if (useOverlay) hideLoading();
+
+            if (!result.success && result.message && result.message.includes('Token Expired')) {
+                logout();
+                showToast('Sesi telah habis, silakan login kembali', 'error');
+                return null;
+            }
+            return result;
+
+        } catch (error) {
+            // Error di sini cuma bisa dari: network gagal total, atau response bukan JSON
+            // valid (biasanya GAS lagi kena limit concurrent execution & balikin halaman
+            // HTML). Ini yang layak di-retry dengan backoff.
+            lastError = error;
+            const masihBisaRetry = attempt < MAX_RETRY;
+            if (masihBisaRetry) {
+                console.warn(`fetchAPI('${action}') gagal (percobaan ${attempt + 1}/${MAX_RETRY + 1}), retry dalam ${BACKOFF_MS[attempt]}ms...`, error);
+                await new Promise(resolve => setTimeout(resolve, BACKOFF_MS[attempt]));
+            }
         }
-        return result;
-    } catch (error) {
-        if (useOverlay) hideLoading();
-        showToast('Koneksi ke server gagal. Pastikan URL API benar.', 'error');
-        console.error(error);
-        return null;
     }
+
+    // Semua percobaan retry habis, benar-benar gagal
+    if (useOverlay) hideLoading();
+    showToast('Koneksi ke server gagal setelah beberapa kali percobaan. Coba lagi sebentar.', 'error');
+    console.error('fetchAPI gagal total setelah retry:', lastError);
+    return null;
 }
