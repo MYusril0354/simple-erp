@@ -397,7 +397,6 @@ function buildHtmlCetakSJ(s, double = false) {
             </table>
             <div class="ttd-wrap">
                 <div class="ttd-box"><div class="ttd-line">Disiapkan Oleh<br><b>${s.sj.disiapkan_oleh || '..........................'}</b></div></div>
-                <div class="ttd-box"><div class="ttd-line">Disetujui Oleh<br><b>${s.sj.disetujui_oleh || '..........................'}</b></div></div>
                 <div class="ttd-box"><div class="ttd-line">Ekspedisi<br><b>${s.sj.ekspedisi || '..........................'}</b></div></div>
                 <div class="ttd-box"><div class="ttd-line">Penerima<br>( .......................... )</div></div>
             </div>
